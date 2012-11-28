@@ -31,17 +31,18 @@ def prefix_authorship(lines, comment_mark='#'):
 #-----------------------------------------------------------------------------
 
 def read_xls(fn='dic.xls'):
-    """Read Excel files and return value-list lines.
+    """Read Excel files and return heads, rows.
     """
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
-    lines = (sheet.row_values(y) for y in xrange(sheet.nrows))
-    lines = ([unicode(v).strip() for v in values] for values in lines)
-    lines = (values for values in lines if values[0].lower() != 'x')
-    lines = list(lines)
-    marks, lines = lines[0][1:], lines[1:]
-    lines = [[v for m, v in zip(marks, values[1:]) if m.lower() != 'x']
-             for values in lines]
-    return lines
+    rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
+    rows = ([unicode(v).strip() for v in values] for values in rows)
+    rows = (values for values in rows if values[0].lower() != 'x')
+    rows = list(rows)
+    marks, rows = rows[0][1:], rows[1:]
+    rows = [[v for m, v in zip(marks, values[1:]) if m.lower() != 'x']
+             for values in rows]
+    heads, rows = rows[0], rows[1:]
+    return heads, rows
 
 #-----------------------------------------------------------------------------
 
@@ -49,5 +50,5 @@ def main():
     pass
 
 if __name__ == '__main__':
-    lines = read_xls()
+    langs, rows = read_xls()
 
