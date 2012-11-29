@@ -225,12 +225,12 @@ def gen_msg_id_hfile(rows, h_fn):
     cols = zip(*records)
     ids = cols[heads.index('ID')]
     en_msgs = cols[heads.index('ENGLISH')]
-    msgs = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
-    msgs = [c_identifier(m) for m in msgs]
+    ids = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
+    ids = [c_identifier(id) for id in ids]
 
     lines = ['/** IDs of Messages */']
     lines += ["typedef enum {"]
-    lines += ['    MSG_%s,' % msg for msg in msgs]
+    lines += ['    MSG_%s,' % id for id in ids]
     lines += ['    MSG_End,']
     lines += ['    MSG_Total = MSG_End']
     lines += ['} MsgId;']
@@ -288,6 +288,4 @@ if __name__ == '__main__':
     gen_msg_id_hfile(rows, 'msg_id.h')
     verify_and_report(rows, 'char.lst', 'verify.report')
     gen_mlang_msg_cfile(rows, 'char.lst', 'mlang.c')
-
-
 
