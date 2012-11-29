@@ -11,8 +11,103 @@ __date__ = "2012/11/27 (initial version) ~ 2012/11/29 (last revision)"
 
 import os
 import sys
+import re
 
 import xlrd
+
+
+#-----------------------------------------------------------------------------
+
+def save_utf8_file(fn, lines):
+    """Save string lines into an UTF8 text files.
+    """
+    out_file = open(fn, "w")
+    out_file.write("\n".join(lines).encode("utf-8"))
+    out_file.close()
+
+
+def save_utf16_file(fn, lines):
+    """Save string lines into an UTF16 text files.
+    """
+    out_file = open(fn, "w")
+    out_file.write("\n".join(lines).encode("utf-16"))
+    out_file.close()
+
+#-----------------------------------------------------------------------------
+
+def read_xls(fn='dic.xls'):
+    """Read Excel files and return heads, rows.
+    """
+    sheet = xlrd.open_workbook(fn).sheet_by_index(0)
+    rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
+    rows = ([unicode(v).strip() for v in values] for values in rows)
+    rows = (values for values in rows if values[0].lower() != 'x')
+    rows = list(rows)
+    marks, rows = rows[0][1:], rows[1:]
+    rows = [[v for m, v in zip(marks, values[1:]) if m.lower() != 'x']
+             for values in rows]
+    return rows
+
+
+#-----------------------------------------------------------------------------
+
+def main_basename(path):
+    """Return a main name of a basename of a given file path.
+    """
+    base = os.path.basename(path)
+    base_main, base_ext = os.path.splitext(base)
+    return base_main
+
+
+def replace_chars(text, replaced_pairs='', deleted_chars=''):
+    """Return a char replaced text.
+
+    Arguments
+    ---------
+    text -- the text
+    replaced_pairs -- the replaced chars
+
+    Example
+    -------
+    >>> replaced = [('a','b'), ('c','d')]
+    >>> removed = 'e'
+    >>> replace_chars('abcde', replaced, removed)
+    'bbdd'
+    """
+    for old, new in replaced_pairs:
+        text = text.replace(old, new)
+    for ch in deleted_chars:
+        text = text.replace(ch, '')
+    return text
+
+
+def camel_case(string):
+    return ''.join(w.capitalize() for w in string.split())
+
+
+def replace_punctuations(text):
+    punctuations = [
+        ('?', 'Q'),   # Q:  question mark
+        ('.', 'P'),   # P:  period; full stop
+        ('!', 'E'),   # E:  exclamation mark
+        ("'", 'SQ'),  # SQ: single quotation mark; single quote
+        ('"', 'DQ'),  # DQ: double quotation mark; double quotes
+        ('(', 'LP'),  # LP: left parenthese
+        (')', 'RP'),  # RP: right parenthese
+        (':', 'Cn'),  # Cn: colon
+        (',', 'Ca'),  # Ca: comma
+        (';', 'S'),   # S:  semicolon
+    ]
+    deleted = '+-*/^=%$#@|\\<>{}[]'
+    return replace_chars(text, punctuations, deleted)
+
+
+def remain_alnum(text):
+    """Remain digit and English letter.
+    """
+    return ''.join(c for c in text if c.isalnum()
+                                   and ord(' ') <= ord(c) <= ord('z'))
+
 
 #-----------------------------------------------------------------------------
 
@@ -28,27 +123,81 @@ def prefix_authorship(lines, comment_mark='#'):
     return prefix + lines
 
 
-#-----------------------------------------------------------------------------
-
-def read_xls(fn='dic.xls'):
-    """Read Excel files and return heads, rows.
+def wrap_header_guard(lines, h_fn):
+    """Wrap a C header guard for a given line list.
     """
-    sheet = xlrd.open_workbook(fn).sheet_by_index(0)
-    rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
-    rows = ([unicode(v).strip() for v in values] for values in rows)
-    rows = (values for values in rows if values[0].lower() != 'x')
-    rows = list(rows)
-    marks, rows = rows[0][1:], rows[1:]
-    rows = [[v for m, v in zip(marks, values[1:]) if m.lower() != 'x']
-             for values in rows]
-    heads, rows = rows[0], rows[1:]
-    return heads, rows
+    h_fn_sig = '_%s_H' % main_basename(h_fn).upper()
+    begin = ['#ifndef %s' % h_fn_sig]
+    begin += ['#define %s' % h_fn_sig, '', '']
+    end = ['', '', '#endif // %s' % h_fn_sig, '']
+    return begin + lines + end
+
+
+def c_identifier(text):
+    """Convert input text into an legal identifier in C.
+    >>> c_identifier("Hello World")
+    'HelloWorld'
+    >>> c_identifier("Anti-Shake")
+    'Antishake'
+    """
+    if ' ' in text:
+        text = camel_case(text)
+    text = re.sub(r'\+\d+', lambda x: x.group().replace('+', 'P'), text)
+    text = re.sub(r'\-\d+', lambda x: x.group().replace('-', 'N'), text)
+    text = replace_punctuations(text)
+    return remain_alnum(text)
+
 
 #-----------------------------------------------------------------------------
+
+def gen_lang_id_hfile(rows, h_fn):
+    """Generate a C header file of language ID enumeration.
+    """
+    heads = rows[0]
+    langs = (h for h in heads if h.upper() != 'ID')
+
+    lines = ['/** Language Indexes */']
+    lines += ['typedef enum {']
+    lines += ['    L_%s,' % lang for lang in langs]
+    lines += ['    L_End,']
+    lines += ['    L_Total = L_End']
+    lines += ['} Lang;']
+
+    lines = wrap_header_guard(lines, h_fn)
+    lines = prefix_authorship(lines, comment_mark='//')
+    save_utf8_file(h_fn, lines)
+
+
+def gen_msg_id_hfile(rows, h_fn):
+    """Generate a C header file of message ID enumeration.
+    """
+    heads, records = rows[0], rows[1:]
+    heads = [h.upper() for h in heads]
+    ids = [r[heads.index('ID') ] for r in records]
+    en_msgs = [r[heads.index('ENGLISH') ] for r in records]
+    msgs = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
+    msgs = [c_identifier(m) for m in msgs]
+
+    lines = ['/** IDs of Messages */']
+    lines += ["typedef enum {"]
+    lines += ['    MSG_%s,' % msg for msg in msgs]
+    lines += ['    MSG_End,']
+    lines += ['    MSG_Total = MSG_End']
+    lines += ['} MsgId;']
+
+    lines = wrap_header_guard(lines, h_fn)
+    lines = prefix_authorship(lines, comment_mark='//')
+    save_utf8_file(h_fn, lines)
+
 
 def main():
     pass
 
+
 if __name__ == '__main__':
-    langs, rows = read_xls()
+    rows = read_xls()
+    gen_lang_id_hfile(rows, 'lang_id.h')
+    gen_msg_id_hfile(rows, 'msg_id.h')
+
+
 
