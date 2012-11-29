@@ -12,6 +12,7 @@ __date__ = "2012/11/27 (initial version) ~ 2012/11/29 (last revision)"
 import os
 import sys
 import re
+from itertools import izip
 
 import xlrd
 
@@ -61,12 +62,10 @@ def read_xls(fn='dic.xls'):
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
     rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
     rows = ([unicode(v).strip() for v in values] for values in rows)
-    rows = (values for values in rows if values[0].lower() != 'x')
-    rows = list(rows)
-    marks, rows = rows[0][1:], rows[1:]
-    rows = [[v for m, v in zip(marks, values[1:]) if m.lower() != 'x']
-             for values in rows]
-    return rows
+    rows = (values[1:] for values in rows if values[0].lower() != 'x')
+    cols = (values[1:] for values in izip(*rows) if values[0].lower() != 'x')
+    rows = izip(*cols)
+    return list(rows)
 
 
 def read_char_lst(fn):
@@ -98,9 +97,6 @@ def seq_divide(sequence, modulus):
     >>> seq_divide('abcdefghijklmnopqr', 4)
     ['abcd', 'efgh', 'ijkl', 'mnop', 'qr']
     """
-    #A = range(0, len(sequence), modulus)
-    #B = A[1:] + [len(sequence)]
-    #return [sequence[a:b] for a, b in zip(A,B)]
     return [sequence[i:i + modulus] for i in xrange(0, len(sequence), modulus)]
 
 
@@ -226,8 +222,9 @@ def gen_msg_id_hfile(rows, h_fn):
     """
     heads, records = rows[0], rows[1:]
     heads = [h.upper() for h in heads]
-    ids = [r[heads.index('ID') ] for r in records]
-    en_msgs = [r[heads.index('ENGLISH') ] for r in records]
+    cols = zip(*records)
+    ids = cols[heads.index('ID')]
+    en_msgs = cols[heads.index('ENGLISH')]
     msgs = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
     msgs = [c_identifier(m) for m in msgs]
 
@@ -289,7 +286,8 @@ if __name__ == '__main__':
     rows = read_xls()
     gen_lang_id_hfile(rows, 'lang_id.h')
     gen_msg_id_hfile(rows, 'msg_id.h')
-    verify_and_report(rows, 'char_latin1.lst', 'verify.report')
+    verify_and_report(rows, 'char.lst', 'verify.report')
+    gen_mlang_msg_cfile(rows, 'char.lst', 'mlang.c')
 
 
 
