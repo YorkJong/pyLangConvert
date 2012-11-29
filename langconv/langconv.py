@@ -29,9 +29,29 @@ def save_utf8_file(fn, lines):
 def save_utf16_file(fn, lines):
     """Save string lines into an UTF16 text files.
     """
-    out_file = open(fn, "w")
-    out_file.write("\n".join(lines).encode("utf-16"))
+    out_file = open(fn, "wb")
+    out_file.write("\r\n".join(lines).encode("utf-16"))
     out_file.close()
+
+
+def read_unicode(fn):
+    """Read a unicode file that may encode with utf_16_le, utf_16_be, or utf_8.
+    """
+    from codecs import BOM_UTF16_LE, BOM_UTF16_BE, BOM_UTF8
+
+    in_file = open(fn, "rb")
+    bs = in_file.read()
+    in_file.close()
+
+    if  bs.startswith(BOM_UTF16_LE):
+        us = bs.decode("utf_16_le").lstrip(BOM_UTF16_LE.decode("utf_16_le"))
+    elif  bs.startswith(BOM_UTF16_BE):
+        us = bs.decode("utf_16_be").lstrip(BOM_UTF16_BE.decode("utf_16_be"))
+    else:
+        us = bs.decode("utf_8").lstrip(BOM_UTF8.decode("utf_8"))
+
+    return us
+
 
 #-----------------------------------------------------------------------------
 
@@ -49,7 +69,40 @@ def read_xls(fn='dic.xls'):
     return rows
 
 
+def read_char_lst(fn):
+    """Return char:index items from a given char list file.
+    """
+    lines = read_unicode(fn).splitlines()
+    lines = (x.rstrip() for x in lines)
+    lines = (x for x in lines if len(x) > 0 and not x.startswith('#'))
+    idx = 0
+    dic = {}
+    repeated = set()
+    for line in lines:
+        if line.startswith(':'):
+            offset = eval(line[1:])
+            if str(offset).isdigit():
+                idx = offset
+        else:
+            repeated |= set(line) & set(dic)
+            idxes = range(idx, idx + len(line))
+            dic.update(zip(line, idxes))
+            idx += len(line)
+    return dic, sorted(list(repeated))
+
+
 #-----------------------------------------------------------------------------
+
+def seq_divide(sequence, modulus):
+    """Divide a sequence into multiple sub-sequences.
+    >>> seq_divide('abcdefghijklmnopqr', 4)
+    ['abcd', 'efgh', 'ijkl', 'mnop', 'qr']
+    """
+    #A = range(0, len(sequence), modulus)
+    #B = A[1:] + [len(sequence)]
+    #return [sequence[a:b] for a, b in zip(A,B)]
+    return [sequence[i:i + modulus] for i in xrange(0, len(sequence), modulus)]
+
 
 def main_basename(path):
     """Return a main name of a basename of a given file path.
@@ -190,6 +243,44 @@ def gen_msg_id_hfile(rows, h_fn):
     save_utf8_file(h_fn, lines)
 
 
+def verify_and_report(rows, char_lst_fn, report_fn):
+    """Generate a report file to list used-but-not-listing chars and
+    listig-but-not-used chars.
+    """
+    heads, records = rows[0], rows[1:]
+    heads = [h.upper() for h in heads]
+    i = heads.index('ID')
+    records = [r[:i] + r[i+1:] for r in records]
+
+    char_use = set([])
+    for r in records:
+        char_use |= set(''.join(r))
+
+    char_tbl, ch_rep = read_char_lst(char_lst_fn)
+    char_lst = set(char_tbl)
+
+    char_not_lst = sorted(char_use - char_lst)
+    char_not_use = sorted(char_lst - char_use)
+
+    lines = []
+    if char_not_lst != []:
+        lines += ['', '# Chars used but not listed:']
+        lines += seq_divide(''.join(char_not_lst), 10)
+    if char_not_use != []:
+        lines += ['', '# Chars listed but not used:']
+        lines += seq_divide(''.join(char_not_use), 10)
+
+    lines = prefix_authorship(lines, comment_mark='#')
+    save_utf16_file(report_fn, lines)
+
+
+def gen_mlang_msg_cfile(rows, char_lst_fn, c_fn):
+    """Generate a C source file to list char indexs arrar for multilanguage
+    messages.
+    """
+    pass
+
+
 def main():
     pass
 
@@ -198,6 +289,7 @@ if __name__ == '__main__':
     rows = read_xls()
     gen_lang_id_hfile(rows, 'lang_id.h')
     gen_msg_id_hfile(rows, 'msg_id.h')
+    verify_and_report(rows, 'char_latin1.lst', 'verify.report')
 
 
 
