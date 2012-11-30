@@ -92,6 +92,22 @@ def read_char_lst(fn):
 
 #-----------------------------------------------------------------------------
 
+def cumsum(X):
+    """Return a list of cumulative sum for a given number list.
+
+    Example
+    -------
+    >>> cumsum([0, 1, 2, 3])
+    [0, 1, 3, 6]
+    """
+    Y = []
+    y = 0
+    for x in X:
+        y += x
+        Y += [y]
+    return Y
+
+
 def seq_divide(sequence, modulus):
     """Divide a sequence into multiple sub-sequences.
     >>> seq_divide('abcdefghijklmnopqr', 4)
@@ -156,6 +172,17 @@ def remain_alnum(text):
     """
     return ''.join(c for c in text if c.isalnum()
                                    and ord(' ') <= ord(c) <= ord('z'))
+
+
+def array_str_from_ints(ints):
+    """Return the string of a C integer array from an integer list
+
+    Example
+    -------
+    >>> array_str_from_ints([1, 2, 3])
+    '1, 2, 3'
+    """
+    return '%4d,' * len(ints) % tuple(ints)
 
 
 #-----------------------------------------------------------------------------
@@ -288,13 +315,73 @@ def verify_and_report(rows, char_lst_fn, report_fn):
     lines = prefix_authorship(lines, comment_mark='#')
     save_utf16_file(report_fn, lines)
 
+#-----------------------------------------------------------------------------
 
-def gen_mlang_ifile(rows, char_lst_fn, c_fn):
+def msg_offsets(msgs):
+    """Return message offsets.
+
+    Format
+    ------
+    LangMsg: MsgOffset^(M+1) Msg^M
+        M: the total number of messages
+
+    Example
+    -------
+    >>> msg_offsets(['a', 'bc', 'def'])
+    [4, 5, 7, 10]
+    """
+    ns = [0, ] + [len(x) for x in msgs]
+    return [x + len(msgs) + 1 for x in cumsum(ns)]
+
+
+def lang_offsets(langs, mlang_tbl):
+    """Return language offsets.
+    """
+    msg_total = len(mlang_tbl['ID'])
+    langs = [lang.upper() for lang in langs]
+    lens = [msg_total+1+len(''.join(mlang_tbl[lang])) for lang in langs]
+    return [x + len(lens) + 1 for x in cumsum([0, ] + lens)]
+
+
+def gen_mlang_ifile(rows, char_lst_fn, h_fn):
     """Generate a C included file listing an array that packs multilanguage
     messages.
-    """
-    pass
 
+    The Output Format
+    -----------------
+    MLangHeader LangMsg^L
+        L: the total number of languages
+    MLangHeader: MsgCounterPerLang LangCount LangOffset^(L+1)
+    LangMsg: MsgOffset^(M+1) Msg^M
+        M: the total number of messages
+    """
+    def char_idx_str_from_msg(msg, char_tbl):
+        """Generate the string of indexes of chars in a message.
+        """
+        return array_str_from_ints([char_tbl[c] for c in msg])
+
+    langs = get_lang_names(rows)
+    mlang_tbl = gen_mlang_tbl(rows)
+    char_tbl, ch_rep = read_char_lst(char_lst_fn)
+
+    lines = [''] * 2
+    lines += ['%4d,   // the total messages of a language'
+                % len(mlang_tbl['ID'])]
+    lines += ['%4d,   // the total number of languages' % len(langs)]
+    lines += ['', '// The offsets of languages']
+    lines += [array_str_from_ints(lang_offsets(langs, mlang_tbl))]
+    for lang in langs:
+        msgs = mlang_tbl[lang.upper()]
+        lines += ['', '// %s message offsets' % lang]
+        lines += [array_str_from_ints(msg_offsets(msgs))]
+        lines += ['', '// %s messages' % lang]
+        lines += [char_idx_str_from_msg(m, char_tbl) for m in msgs]
+
+    lines = prefix_authorship(lines, comment_mark='//')
+    save_utf8_file(h_fn, lines)
+
+
+#-----------------------------------------------------------------------------
 
 def main():
     pass
@@ -305,5 +392,4 @@ if __name__ == '__main__':
     gen_lang_id_hfile(rows, 'lang_id.h')
     gen_msg_id_hfile(rows, 'msg_id.h')
     verify_and_report(rows, 'char.lst', 'verify.report')
-    gen_mlang_ifile(rows, 'char.lst', 'mlang.c')
-
+    gen_mlang_ifile(rows, 'char.lst', 'mlang.i')
