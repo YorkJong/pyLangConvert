@@ -57,7 +57,7 @@ def read_unicode(fn):
 #-----------------------------------------------------------------------------
 
 def read_xls(fn='dic.xls'):
-    """Read Excel files and return heads, rows.
+    """Read an Excel file and return rows.
     """
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
     rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
@@ -207,16 +207,19 @@ def get_lang_names(rows):
     return [h for h in heads if h.upper() != 'ID']
 
 
+def gen_mlang_tbl(rows):
+    """Generate the multilanguage message table.
+    """
+    heads = (h.upper() for h in rows[0])
+    cols = izip(*rows[1:])
+    return dict(izip(heads, cols))
+
+
 def gen_msg_ids(rows):
+    """ Generate and return message IDs.
     """
-    Generate message IDs
-    """
-    heads, records = rows[0], rows[1:]
-    heads = [h.upper() for h in heads]
-    cols = zip(*records)
-    ids = cols[heads.index('ID')]
-    en_msgs = cols[heads.index('ENGLISH')]
-    ids = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
+    tbl = gen_mlang_tbl(rows)
+    ids = (id or msg for id, msg in zip(tbl['ID'], tbl['ENGLISH']))
     return [c_identifier(id) for id in ids]
 
 
@@ -253,8 +256,8 @@ def gen_msg_id_hfile(rows, h_fn):
 
 
 def verify_and_report(rows, char_lst_fn, report_fn):
-    """Generate a report file to list used-but-not-listing chars and
-    listig-but-not-used chars.
+    """Generate a report file to list used-but-not-listed chars and
+    listed-but-not-used chars.
     """
     def get_mlang_records(rows):
         """Get records without ID column
@@ -287,7 +290,7 @@ def verify_and_report(rows, char_lst_fn, report_fn):
 
 
 def gen_mlang_ifile(rows, char_lst_fn, c_fn):
-    """Generate a C included file to list char indexs array for multilanguage
+    """Generate a C included file listing an array that packs multilanguage
     messages.
     """
     pass
@@ -302,5 +305,5 @@ if __name__ == '__main__':
     gen_lang_id_hfile(rows, 'lang_id.h')
     gen_msg_id_hfile(rows, 'msg_id.h')
     verify_and_report(rows, 'char.lst', 'verify.report')
-    gen_mlang_msg_cfile(rows, 'char.lst', 'mlang.c')
+    gen_mlang_ifile(rows, 'char.lst', 'mlang.c')
 
