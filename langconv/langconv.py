@@ -199,15 +199,35 @@ def c_identifier(text):
 
 #-----------------------------------------------------------------------------
 
+def get_lang_names(rows):
+    """
+    Get language names
+    """
+    heads = rows[0]
+    return [h for h in heads if h.upper() != 'ID']
+
+
+def gen_msg_ids(rows):
+    """
+    Generate message IDs
+    """
+    heads, records = rows[0], rows[1:]
+    heads = [h.upper() for h in heads]
+    cols = zip(*records)
+    ids = cols[heads.index('ID')]
+    en_msgs = cols[heads.index('ENGLISH')]
+    ids = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
+    return [c_identifier(id) for id in ids]
+
+
+#-----------------------------------------------------------------------------
+
 def gen_lang_id_hfile(rows, h_fn):
     """Generate a C header file of language ID enumeration.
     """
-    heads = rows[0]
-    langs = (h for h in heads if h.upper() != 'ID')
-
     lines = ['/** Language Indexes */']
     lines += ['typedef enum {']
-    lines += ['    L_%s,' % lang for lang in langs]
+    lines += ['    L_%s,' % lang for lang in get_lang_names(rows)]
     lines += ['    L_End,']
     lines += ['    L_Total = L_End']
     lines += ['} Lang;']
@@ -220,17 +240,9 @@ def gen_lang_id_hfile(rows, h_fn):
 def gen_msg_id_hfile(rows, h_fn):
     """Generate a C header file of message ID enumeration.
     """
-    heads, records = rows[0], rows[1:]
-    heads = [h.upper() for h in heads]
-    cols = zip(*records)
-    ids = cols[heads.index('ID')]
-    en_msgs = cols[heads.index('ENGLISH')]
-    ids = [id or en_msg for id, en_msg in zip(ids, en_msgs)]
-    ids = [c_identifier(id) for id in ids]
-
     lines = ['/** IDs of Messages */']
     lines += ["typedef enum {"]
-    lines += ['    MSG_%s,' % id for id in ids]
+    lines += ['    MSG_%s,' % id for id in gen_msg_ids(rows)]
     lines += ['    MSG_End,']
     lines += ['    MSG_Total = MSG_End']
     lines += ['} MsgId;']
@@ -244,13 +256,16 @@ def verify_and_report(rows, char_lst_fn, report_fn):
     """Generate a report file to list used-but-not-listing chars and
     listig-but-not-used chars.
     """
-    heads, records = rows[0], rows[1:]
-    heads = [h.upper() for h in heads]
-    i = heads.index('ID')
-    records = [r[:i] + r[i+1:] for r in records]
+    def get_mlang_records(rows):
+        """Get records without ID column
+        """
+        heads, records = rows[0], rows[1:]
+        heads = [h.upper() for h in heads]
+        i = heads.index('ID')
+        return [r[:i] + r[i+1:] for r in records]
 
     char_use = set([])
-    for r in records:
+    for r in get_mlang_records(rows):
         char_use |= set(''.join(r))
 
     char_tbl, ch_rep = read_char_lst(char_lst_fn)
@@ -271,8 +286,8 @@ def verify_and_report(rows, char_lst_fn, report_fn):
     save_utf16_file(report_fn, lines)
 
 
-def gen_mlang_msg_cfile(rows, char_lst_fn, c_fn):
-    """Generate a C source file to list char indexs arrar for multilanguage
+def gen_mlang_ifile(rows, char_lst_fn, c_fn):
+    """Generate a C included file to list char indexs array for multilanguage
     messages.
     """
     pass
