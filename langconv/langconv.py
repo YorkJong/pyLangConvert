@@ -12,6 +12,7 @@ __date__ = "2012/11/27 (initial version) ~ 2012/11/29 (last revision)"
 import os
 import sys
 import re
+import argparse
 from itertools import izip
 
 import xlrd
@@ -282,7 +283,7 @@ def gen_msg_id_hfile(rows, h_fn):
     save_utf8_file(h_fn, lines)
 
 
-def verify_and_report(rows, char_lst_fn, report_fn):
+def verify(rows, char_lst_fn, report_fn):
     """Generate a report file to list used-but-not-listed chars and
     listed-but-not-used chars.
     """
@@ -383,13 +384,103 @@ def gen_mlang_ifile(rows, char_lst_fn, h_fn):
 
 #-----------------------------------------------------------------------------
 
+def parse_args(args):
+    # create top-level parser
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-v', '--version', action='version',
+                        version='%s v%s by %s' %
+                        (__software__, __version__, __author__))
+    subparsers = parser.add_subparsers(help='commands')
+
+    # create the parser for the "lang_id" command
+    sub = subparsers.add_parser('lang_id',
+        help='Generate a C header file of language ID enumeration.')
+    sub.set_defaults(func=gen_lang_id_hfile,
+                     dicfile='dic.xls', outfile='lang_id.h')
+    sub.add_argument('dicfile', metavar='xls-file', nargs='?',
+        help='''An Excel dictionary file for multilanguage translation.
+            The default is "%s".
+            ''' % sub.get_default('infile'))
+    sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
+        help='''place the output into <file>, a C header file (default "%s").
+            ''' % sub.get_default('outfile'))
+
+    # create the parser for the "msg_id" command
+    sub = subparsers.add_parser('msg_id',
+        help='Generate a C header file of message ID enumeration.')
+    sub.set_defaults(func=gen_msg_id_hfile,
+                     dicfile='dic.xls', outfile='msg_id.h')
+    sub.add_argument('dicfile', metavar='xls-file', nargs='?',
+        help='''An Excel dictionary file for multilanguage translation.
+            The default is "%s".
+            ''' % sub.get_default('infile'))
+    sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
+        help='''place the output into <file>, a C header file (default "%s").
+            ''' % sub.get_default('outfile'))
+
+    # create the parser for the "verify" command
+    sub = subparsers.add_parser('verify',
+        help='''Generate a report file that lists used-but-not-listed chars and
+            listed-but-not-used chars.''')
+    sub.set_defaults(func=verify,
+                     dicfile='dic.xls', outfile='verify.report',
+                     lstfile='char.lst')
+    sub.add_argument('dicfile', metavar='XLS-file', nargs='?',
+        help='''An Excel dictionary file for multilanguage translation.
+            The default is "%s".
+            ''' % sub.get_default('infile'))
+    sub.add_argument('-l', '--list', metavar='LST-file', dest='lstfile',
+        help='''An unicode text file that lists unicode characters.
+            (default "%s").
+            ''' % sub.get_default('lstfile'))
+    sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
+        help='''place the output into <file>, an unicode text file
+            (default "%s").
+            ''' % sub.get_default('outfile'))
+
+    # create the parser for the "pack" command
+    sub = subparsers.add_parser('pack',
+        help='''Generate a C included file listing an array that packs
+            multilanguage messages.''')
+    sub.set_defaults(func=gen_mlang_ifile,
+                     dicfile='dic.xls', outfile='mlang.i', lstfile='char.lst')
+    sub.add_argument('dicfile', metavar='XLS-file', nargs='?',
+        help='''An Excel dictionary file for multilanguage translation.
+            The default is "%s".
+            ''' % sub.get_default('infile'))
+    sub.add_argument('-l', '--list', metavar='LST-file', dest='lstfile',
+        help='''An unicode text file that lists unicode characters.
+            (default "%s").
+            ''' % sub.get_default('lstfile'))
+    sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
+        help='''place the output into <file>, a C included file
+            (default "%s").
+            ''' % sub.get_default('outfile'))
+
+    # parse args and execute functions
+    args = parser.parse_args(args)
+    rows = read_xls(args.dicfile)
+    if 'lstfile' in args:
+        args.func(rows, args.lstfile, args.outfile)
+    else:
+        args.func(rows, args.outfile)
+
+
 def main():
-    pass
+    """Start point of this module.
+    """
+    try:
+        parse_args(sys.argv[1:])
+    except IOError as err:
+        print err
+    except ValueError as err:
+        print err
 
 
 if __name__ == '__main__':
-    rows = read_xls()
-    gen_lang_id_hfile(rows, 'lang_id.h')
-    gen_msg_id_hfile(rows, 'msg_id.h')
-    verify_and_report(rows, 'char.lst', 'verify.report')
-    gen_mlang_ifile(rows, 'char.lst', 'mlang.i')
+    main()
+    #rows = read_xls()
+    #gen_lang_id_hfile(rows, 'lang_id.h')
+    #gen_msg_id_hfile(rows, 'msg_id.h')
+    #verify(rows, 'char.lst', 'verify.report')
+    #gen_mlang_ifile(rows, 'char.lst', 'mlang.i')
