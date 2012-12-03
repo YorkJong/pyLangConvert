@@ -339,7 +339,7 @@ def lang_offsets(langs, mlang_tbl):
     return [x + len(lens) + 1 for x in cumsum([0, ] + lens)]
 
 
-def gen_mlang_ifile(rows, char_tbl, h_fn):
+def pack(rows, char_tbl, h_fn):
     """Generate a C included file listing an array that packs multilanguage
     messages.
 
@@ -415,8 +415,7 @@ def parse_args(args):
     sub.set_defaults(func=verify, outfile='verify.report')
     sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='An Excel dictionary file for multilanguage translation.')
-    sub.add_argument('-l', '--list', metavar='LST-file', type=read_char_lst,
-        dest='char_tbl',
+    sub.add_argument('char_tbl', metavar='LST-file', type=read_char_lst,
         help='An unicode text file that lists unicode characters.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, an unicode text file
@@ -425,13 +424,12 @@ def parse_args(args):
 
     # create the parser for the "pack" command
     sub = subparsers.add_parser('pack',
-        help='''Generate a C included file that lists an array that packs
+        help='''Generate a C included file listing an array that packs
             multilanguage messages.''')
-    sub.set_defaults(func=gen_mlang_ifile, outfile='mlang.i')
+    sub.set_defaults(func=pack, outfile='mlang.i')
     sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='An Excel dictionary file for multilanguage translation.')
-    sub.add_argument('-l', '--list', metavar='LST-file', type=read_char_lst,
-        dest='char_tbl',
+    sub.add_argument('char_tbl', metavar='LST-file', type=read_char_lst,
         help='An unicode text file that lists unicode characters.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C included file
@@ -464,4 +462,4 @@ if __name__ == '__main__':
     #gen_msg_id_hfile(rows, 'msg_id.h')
     #char_tbl = read_char_lst('char.lst')
     #verify(rows, char_tbl, 'verify.report')
-    #gen_mlang_ifile(rows, char_tbl, 'mlang.i')
+    #pack(rows, char_tbl, 'mlang.i')
