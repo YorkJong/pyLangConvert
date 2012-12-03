@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-The purpose of the tool are:
-1) language translating
-2) OSD indexing
+The purpose of this tool is for converting and generating language relative files
+from an Excel dictionary file and an unicode character List file.
 """
 __software__ = "Multi-language converting tool"
 __version__ = "1.00"
@@ -395,9 +394,8 @@ def parse_args(args):
     # create the parser for the "lang_id" command
     sub = subparsers.add_parser('lang_id',
         help='Generate a C header file of language ID enumeration.')
-    sub.set_defaults(func=gen_lang_id_hfile,
-                     dicfile='dic.xls', outfile='lang_id.h')
-    sub.add_argument('dicfile', metavar='xls-file', nargs='?',
+    sub.set_defaults(func=gen_lang_id_hfile, outfile='lang_id.h')
+    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='''An Excel dictionary file for multilanguage translation.
             The default is "%s".
             ''' % sub.get_default('infile'))
@@ -408,9 +406,8 @@ def parse_args(args):
     # create the parser for the "msg_id" command
     sub = subparsers.add_parser('msg_id',
         help='Generate a C header file of message ID enumeration.')
-    sub.set_defaults(func=gen_msg_id_hfile,
-                     dicfile='dic.xls', outfile='msg_id.h')
-    sub.add_argument('dicfile', metavar='xls-file', nargs='?',
+    sub.set_defaults(func=gen_msg_id_hfile, outfile='msg_id.h')
+    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='''An Excel dictionary file for multilanguage translation.
             The default is "%s".
             ''' % sub.get_default('infile'))
@@ -420,12 +417,11 @@ def parse_args(args):
 
     # create the parser for the "verify" command
     sub = subparsers.add_parser('verify',
-        help='''Generate a report file that lists used-but-not-listed chars and
-            listed-but-not-used chars.''')
-    sub.set_defaults(func=verify,
-                     dicfile='dic.xls', outfile='verify.report',
+        help='''Generate a report file that lists used-but-not-listed
+            characters and listed-but-not-used characters.''')
+    sub.set_defaults(func=verify, outfile='verify.report',
                      lstfile='char.lst')
-    sub.add_argument('dicfile', metavar='XLS-file', nargs='?',
+    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='''An Excel dictionary file for multilanguage translation.
             The default is "%s".
             ''' % sub.get_default('infile'))
@@ -440,11 +436,11 @@ def parse_args(args):
 
     # create the parser for the "pack" command
     sub = subparsers.add_parser('pack',
-        help='''Generate a C included file listing an array that packs
+        help='''Generate a C included file that lists an array that packs
             multilanguage messages.''')
     sub.set_defaults(func=gen_mlang_ifile,
-                     dicfile='dic.xls', outfile='mlang.i', lstfile='char.lst')
-    sub.add_argument('dicfile', metavar='XLS-file', nargs='?',
+                     outfile='mlang.i', lstfile='char.lst')
+    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='''An Excel dictionary file for multilanguage translation.
             The default is "%s".
             ''' % sub.get_default('infile'))
@@ -459,11 +455,10 @@ def parse_args(args):
 
     # parse args and execute functions
     args = parser.parse_args(args)
-    rows = read_xls(args.dicfile)
     if 'lstfile' in args:
-        args.func(rows, args.lstfile, args.outfile)
+        args.func(args.rows, args.lstfile, args.outfile)
     else:
-        args.func(rows, args.outfile)
+        args.func(args.rows, args.outfile)
 
 
 def main():
