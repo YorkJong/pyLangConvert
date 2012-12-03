@@ -20,7 +20,7 @@ echo =^> Generate a report file (%tgt%) that lists used-but-not-listed
 echo    chars and listed-but-not-used chars.
 if not exist %dic% echo File "%dic%" Not Found!
 if not exist %lst% echo File "%lst%" Not Found!
-if exist %dic% if exist %lst% %langconv% verify -o%tgt% -l%lst% %dic%
+if exist %dic% if exist %lst% %langconv% verify -o%tgt% %dic% %lst%
 
 set dic=dic.xls
 set lst=char.lst
@@ -29,6 +29,6 @@ echo =^> Generate a C included file (%tgt%) listing an array that packs
 echo    multilanguage messages.
 if not exist %dic% echo File "%dic%" Not Found!
 if not exist %lst% echo File "%lst%" Not Found!
-if exist %dic% if exist %lst% %langconv% pack -o%tgt% -l%lst% %dic%
+if exist %dic% if exist %lst% %langconv% pack -o%tgt% %dic% %lst%
 
 pause

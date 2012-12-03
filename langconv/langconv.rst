@@ -1,0 +1,110 @@
+========
+LangConv
+========
+-------------------
+Language Converting
+-------------------
+
+:Author: Jiang Yu-Kuan
+:Contact: yukuan.jiang@gmail.com
+:Revision: 0001
+:Date: 2012-12-03
+
+.. contents::
+
+
+Introduction
+============
+
+The purpose of this tool is for converting and generating language relative files
+from an Excel dictionary file and an unicode character List file.
+
+Usage
+=====
+Top level
+---------
+positional arguments:
+  {lang_id,msg_id,verify,pack}
+                        commands
+    lang_id             Generate a C header file of language ID enumeration.
+    msg_id              Generate a C header file of message ID enumeration.
+    verify              Generate a report file that lists used-but-not-listed
+                        characters and listed-but-not-used characters.
+    pack                Generate a C included file listing an array that packs
+                        multilanguage messages.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+
+lang_id command
+---------------
+usage: langconv.py lang_id [-h] [-o <file>] XLS-file
+
+positional arguments:
+  XLS-file              An Excel dictionary file for multilanguage
+                        translation.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <file>, --output <file>
+                        place the output into <file>, a C header file (default
+                        "lang_id.h").
+
+msg_id command
+--------------
+usage: langconv.py msg_id [-h] [-o <file>] XLS-file
+
+positional arguments:
+  XLS-file              An Excel dictionary file for multilanguage
+                        translation.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <file>, --output <file>
+                        place the output into <file>, a C header file (default
+                        "msg_id.h").
+
+verify command
+--------------
+usage: langconv.py verify [-h] [-o <file>] XLS-file LST-file
+
+positional arguments:
+  XLS-file              An Excel dictionary file for multilanguage
+                        translation.
+  LST-file              An unicode text file that lists unicode characters.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <file>, --output <file>
+                        place the output into <file>, an unicode text file
+                        (default "verify.report").
+
+pack command
+------------
+usage: langconv.py pack [-h] [-o <file>] XLS-file LST-file
+
+positional arguments:
+  XLS-file              An Excel dictionary file for multilanguage
+                        translation.
+  LST-file              An unicode text file that lists unicode characters.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <file>, --output <file>
+                        place the output into <file>, a C included file
+                        (default "mlang.i").
+
+
+ToDo List
+=========
+
+
+Version History
+===============
+
+1.00
+----
+Released 2012-12-03
+
+* Initial version
