@@ -7,7 +7,7 @@ Language Converting
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0001
+:Revision: 0002
 :Date: 2012-12-03
 
 .. contents::
@@ -16,13 +16,15 @@ Language Converting
 Introduction
 ============
 
-The purpose of this tool is for converting and generating language relative files
-from an Excel dictionary file and an unicode character List file.
+The purpose of this tool generating language relative files from an Excel
+dictionary file and an unicode character List file.
 
 Usage
 =====
 Top level
 ---------
+usage: langconv.exe [-h] [-v] {lang_id,msg_id,verify,pack} ...
+
 positional arguments:
   {lang_id,msg_id,verify,pack}
                         commands
@@ -39,7 +41,7 @@ optional arguments:
 
 lang_id command
 ---------------
-usage: langconv.py lang_id [-h] [-o <file>] XLS-file
+usage: langconv.exe lang_id [-h] [-o <file>] XLS-file
 
 positional arguments:
   XLS-file              An Excel dictionary file for multilanguage
@@ -53,7 +55,7 @@ optional arguments:
 
 msg_id command
 --------------
-usage: langconv.py msg_id [-h] [-o <file>] XLS-file
+usage: langconv.exe msg_id [-h] [-o <file>] XLS-file
 
 positional arguments:
   XLS-file              An Excel dictionary file for multilanguage
@@ -67,7 +69,7 @@ optional arguments:
 
 verify command
 --------------
-usage: langconv.py verify [-h] [-o <file>] XLS-file LST-file
+usage: langconv.exe verify [-h] [-o <file>] XLS-file LST-file
 
 positional arguments:
   XLS-file              An Excel dictionary file for multilanguage
@@ -82,7 +84,7 @@ optional arguments:
 
 pack command
 ------------
-usage: langconv.py pack [-h] [-o <file>] XLS-file LST-file
+usage: langconv.exe pack [-h] [-o <file>] XLS-file LST-file
 
 positional arguments:
   XLS-file              An Excel dictionary file for multilanguage

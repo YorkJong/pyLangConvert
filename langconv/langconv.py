@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-The purpose of this tool is for converting and generating language relative files
-from an Excel dictionary file and an unicode character List file.
+The purpose of this tool generating language relative files from an
+Excel dictionary file and an unicode character List file.
 """
 __software__ = "Multi-language converting tool"
 __version__ = "1.00"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2012/11/29 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2012/12/03 (last revision)"
 
 import os
 import sys
