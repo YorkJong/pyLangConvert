@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-The purpose of this tool generating language relative files from an
-Excel dictionary file and an unicode character List file.
+The purpose of this tool is for generating multi-language relative files. With
+an Excel dictionary file, it can enumerate language IDs and message IDs with
+the format of C header files. With an additional character list file, it can
+help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
 __version__ = "1.00"
@@ -265,6 +267,16 @@ def gen_msg_ids(rows):
     return [c_identifier(id) for id in ids]
 
 
+def offsets_from_lens(lens):
+    """Returns an offset list from a length list.
+
+    Example
+    -------
+    >>> offsets_from_lens([1, 2, 3])
+    [4, 5, 7, 10]
+    """
+    return [x + len(lens) + 1 for x in cumsum([0, ] + lens)]
+
 #-----------------------------------------------------------------------------
 
 def gen_lang_id_hfile(rows, h_fn):
@@ -298,8 +310,8 @@ def gen_msg_id_hfile(rows, h_fn):
 
 
 def verify(rows, char_tbl, report_fn):
-    """Generate a report file to list used-but-not-listed chars and
-    listed-but-not-used chars.
+    """Generate a report file to list used-but-not-listed characters and
+    listed-but-not-used characters.
     """
     def get_mlang_records(rows):
         """Get records without ID column
@@ -328,33 +340,6 @@ def verify(rows, char_tbl, report_fn):
     lines = prefix_authorship(lines, comment_mark='#')
     save_utf16_file(report_fn, lines)
 
-#-----------------------------------------------------------------------------
-
-def msg_offsets(msgs):
-    """Return message offsets.
-
-    Format
-    ------
-    LangMsg: MsgOffset^(M+1) Msg^M
-        M: the total number of messages
-
-    Example
-    -------
-    >>> msg_offsets(['a', 'bc', 'def'])
-    [4, 5, 7, 10]
-    """
-    ns = [0, ] + [len(x) for x in msgs]
-    return [x + len(msgs) + 1 for x in cumsum(ns)]
-
-
-def lang_offsets(langs, mlang_tbl):
-    """Return language offsets.
-    """
-    msg_total = len(mlang_tbl['ID'])
-    langs = [lang.upper() for lang in langs]
-    lens = [msg_total+1+len(''.join(mlang_tbl[lang])) for lang in langs]
-    return [x + len(lens) + 1 for x in cumsum([0, ] + lens)]
-
 
 def pack(rows, char_tbl, h_fn):
     """Generate a C included file listing an array that packs multilanguage
@@ -368,6 +353,19 @@ def pack(rows, char_tbl, h_fn):
     LangMsg: MsgOffset^(M+1) Msg^M
         M: the total number of messages
     """
+    def lang_offsets(langs, mlang_tbl):
+        """Return language offsets.
+        """
+        msg_total = len(mlang_tbl['ID'])
+        langs = [lang.upper() for lang in langs]
+        lens = [msg_total+1+len(''.join(mlang_tbl[lang])) for lang in langs]
+        return offsets_from_lens(lens)
+
+    def msg_offsets(msgs):
+        """Return message offsets.
+        """
+        return offsets_from_lens([len(x) for x in msgs])
+
     def char_idx_str_from_msg(msg, char_tbl):
         """Generate the string of indexes of chars in a message.
         """

@@ -7,8 +7,8 @@ Language Converting
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0002
-:Date: 2012-12-03
+:Revision: 0003
+:Date: 2012-12-04
 
 .. contents::
 
@@ -16,8 +16,10 @@ Language Converting
 Introduction
 ============
 
-The purpose of this tool generating language relative files from an Excel
-dictionary file and an unicode character List file.
+The purpose of this tool is for generating multi-language relative files. With
+an Excel dictionary file, it can enumerate language IDs and message IDs with
+the format of C header files. With an additional character list file, it can
+help us indexing characters and packing messages.
 
 Usage
 =====
