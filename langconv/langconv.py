@@ -6,7 +6,7 @@ Excel dictionary file and an unicode character List file.
 __software__ = "Multi-language converting tool"
 __version__ = "1.00"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2012/12/03 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2012/12/04 (last revision)"
 
 import os
 import sys
@@ -116,6 +116,11 @@ def seq_divide(sequence, modulus):
 
 def main_basename(path):
     """Return a main name of a basename of a given file path.
+
+    Example
+    -------
+    >>> main_basename('c:\code\langconv\msg_id.h')
+    'msg_id.h'
     """
     base = os.path.basename(path)
     base_main, base_ext = os.path.splitext(base)
@@ -145,10 +150,19 @@ def replace_chars(text, replaced_pairs='', deleted_chars=''):
 
 
 def camel_case(string):
+    """Return camel case string from a space-separated string.
+
+    Example
+    -------
+    >>> camel_case('good job')
+    'GoodJob'
+    """
     return ''.join(w.capitalize() for w in string.split())
 
 
 def replace_punctuations(text):
+    """Replace punctuation characters with abbreviations for a string.
+    """
     punctuations = [
         ('?', 'Q'),   # Q:  question mark
         ('.', 'P'),   # P:  period; full stop
@@ -166,7 +180,7 @@ def replace_punctuations(text):
 
 
 def remain_alnum(text):
-    """Remain digit and English letter.
+    """Remain digits and English letters of a string.
     """
     return ''.join(c for c in text if c.isalnum()
                                    and ord(' ') <= ord(c) <= ord('z'))
@@ -209,6 +223,9 @@ def wrap_header_guard(lines, h_fn):
 
 def c_identifier(text):
     """Convert input text into an legal identifier in C.
+
+    Example
+    -------
     >>> c_identifier("Hello World")
     'HelloWorld'
     >>> c_identifier("Anti-Shake")
@@ -389,8 +406,7 @@ def parse_args(args):
     # create the parser for the "lang_id" command
     sub = subparsers.add_parser('lang_id',
         help='Generate a C header file of language ID enumeration.')
-    sub.set_defaults(func=gen_lang_id_hfile,
-                     outfile='lang_id.h', char_tbl=None)
+    sub.set_defaults(func=gen_lang_id_hfile, outfile='lang_id.h')
     sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='An Excel dictionary file for multilanguage translation.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
@@ -400,8 +416,7 @@ def parse_args(args):
     # create the parser for the "msg_id" command
     sub = subparsers.add_parser('msg_id',
         help='Generate a C header file of message ID enumeration.')
-    sub.set_defaults(func=gen_msg_id_hfile,
-                     outfile='msg_id.h', char_tbl=None)
+    sub.set_defaults(func=gen_msg_id_hfile, outfile='msg_id.h')
     sub.add_argument('rows', metavar='XLS-file', type=read_xls,
         help='An Excel dictionary file for multilanguage translation.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
@@ -438,7 +453,7 @@ def parse_args(args):
 
     # parse args and execute functions
     args = parser.parse_args(args)
-    if args.char_tbl:
+    if 'char_tbl' in args:
         args.func(args.rows, args.char_tbl, args.outfile)
     else:
         args.func(args.rows, args.outfile)
