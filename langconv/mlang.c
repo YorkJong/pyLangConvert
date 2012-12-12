@@ -24,8 +24,7 @@ static const uint16_t _pack[] = {
 static Lang _lang;
 
 
-
-/** Set current language. */
+/** Sets current language. */
 void ML_setLang(Lang lang)
 {
     assert (lang < LANGS);
@@ -33,7 +32,7 @@ void ML_setLang(Lang lang)
 }
 
 
-/** Get Char string of a given message.
+/** Gets Char string of a given message.
  * @param m message ID
  * @param str buffer of the Char string of the message
  * @param len length of the Char string
