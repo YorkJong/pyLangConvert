@@ -6,9 +6,9 @@ the format of C header files. With an additional character list file, it can
 help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
-__version__ = "1.00"
+__version__ = "1.01"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2012/12/04 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2012/12/21 (last revision)"
 
 import os
 import sys
@@ -401,53 +401,57 @@ def parse_args(args):
                         (__software__, __version__, __author__))
     subparsers = parser.add_subparsers(help='commands')
 
+    #--------------------------------------------------------------------------
+
+    # create the parent parser of XLS-file
+    xls = argparse.ArgumentParser(add_help=False)
+    xls.add_argument('rows', metavar='XLS-file', type=read_xls,
+        help='An Excel dictionary file for multilanguage translation.')
+
     # create the parser for the "lang_id" command
-    sub = subparsers.add_parser('lang_id',
+    sub = subparsers.add_parser('lang_id', parents=[xls],
         help='Generate a C header file of language ID enumeration.')
     sub.set_defaults(func=gen_lang_id_hfile, outfile='lang_id.h')
-    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
-        help='An Excel dictionary file for multilanguage translation.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C header file (default "%s").
             ''' % sub.get_default('outfile'))
 
     # create the parser for the "msg_id" command
-    sub = subparsers.add_parser('msg_id',
+    sub = subparsers.add_parser('msg_id', parents=[xls],
         help='Generate a C header file of message ID enumeration.')
     sub.set_defaults(func=gen_msg_id_hfile, outfile='msg_id.h')
-    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
-        help='An Excel dictionary file for multilanguage translation.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C header file (default "%s").
             ''' % sub.get_default('outfile'))
 
+    #--------------------------------------------------------------------------
+
+    # create the parent parser of char list file
+    lst = argparse.ArgumentParser(add_help=False)
+    lst.add_argument('char_tbl', metavar='LST-file', type=read_char_lst,
+        help='An unicode text file that lists unicode characters.')
+
     # create the parser for the "verify" command
-    sub = subparsers.add_parser('verify',
+    sub = subparsers.add_parser('verify', parents=[xls, lst],
         help='''Generate a report file that lists used-but-not-listed
             characters and listed-but-not-used characters.''')
     sub.set_defaults(func=verify, outfile='verify.report')
-    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
-        help='An Excel dictionary file for multilanguage translation.')
-    sub.add_argument('char_tbl', metavar='LST-file', type=read_char_lst,
-        help='An unicode text file that lists unicode characters.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, an unicode text file
             (default "%s").
             ''' % sub.get_default('outfile'))
 
     # create the parser for the "pack" command
-    sub = subparsers.add_parser('pack',
+    sub = subparsers.add_parser('pack', parents=[xls, lst],
         help='''Generate a C included file listing an array that packs
             multilanguage messages.''')
     sub.set_defaults(func=pack, outfile='mlang.i')
-    sub.add_argument('rows', metavar='XLS-file', type=read_xls,
-        help='An Excel dictionary file for multilanguage translation.')
-    sub.add_argument('char_tbl', metavar='LST-file', type=read_char_lst,
-        help='An unicode text file that lists unicode characters.')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C included file
             (default "%s").
             ''' % sub.get_default('outfile'))
+
+    #--------------------------------------------------------------------------
 
     # parse args and execute functions
     args = parser.parse_args(args)
