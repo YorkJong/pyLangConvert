@@ -121,8 +121,8 @@ def main_basename(path):
 
     Example
     -------
-    >>> main_basename('c:\code\langconv\msg_id.h')
-    'msg_id.h'
+    >>> main_basename('c:\code\langconv\MsgID.h')
+    'MsgID.h'
     """
     base = os.path.basename(path)
     base_main, base_ext = os.path.splitext(base)
