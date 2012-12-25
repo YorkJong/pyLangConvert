@@ -37,7 +37,7 @@ void ML_setLang(Lang lang)
  * @param str buffer of the Char string of the message
  * @param len length of the Char string
  */
-void ML_getMsgStr(MsgId m, Char** str, size_t* len)
+void ML_getMsgStr(MsgID m, Char** str, size_t* len)
 {
     const uint16_t *msgOffset = &LANG_OFFSET[LANG_OFFSET[_lang]];
 

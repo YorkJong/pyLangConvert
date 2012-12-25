@@ -2,12 +2,12 @@
 set langconv=langconv.py
 
 set dic=dic.xls
-set tgt=lang_id.h
+set tgt=LangID.h
 echo =^> Generate a C header file (%tgt%) of language ID enumeration.
 %langconv% lang_id -o%tgt% %dic%
 
 set dic=dic.xls
-set tgt=msg_id.h
+set tgt=MsgID.h
 echo =^> Generate a C header file (%tgt%) of message ID enumeration.
 %langconv% msg_id -o%tgt% %dic%
 

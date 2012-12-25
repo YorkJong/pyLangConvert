@@ -6,9 +6,9 @@ the format of C header files. With an additional character list file, it can
 help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
-__version__ = "1.01"
+__version__ = "1.05"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2012/12/21 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2012/12/25 (last revision)"
 
 import os
 import sys
@@ -216,7 +216,11 @@ def prefix_authorship(lines, comment_mark='#'):
 def wrap_header_guard(lines, h_fn):
     """Wrap a C header guard for a given line list.
     """
-    h_fn_sig = '_%s_H' % main_basename(h_fn).upper()
+    def underscoresize(txt):
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', txt)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+    h_fn_sig = '_%s_H' % underscoresize(main_basename(h_fn)).upper()
     begin = ['#ifndef %s' % h_fn_sig]
     begin += ['#define %s' % h_fn_sig, '', '']
     end = ['', '', '#endif // %s' % h_fn_sig, '']
@@ -302,7 +306,7 @@ def gen_msg_id_hfile(rows, h_fn):
     lines += ['    MSG_%s,' % id for id in gen_msg_ids(rows)]
     lines += ['    MSG_End,']
     lines += ['    MSG_Total = MSG_End']
-    lines += ['} MsgId;']
+    lines += ['} MsgID;']
 
     lines = wrap_header_guard(lines, h_fn)
     lines = prefix_authorship(lines, comment_mark='//')
@@ -411,7 +415,7 @@ def parse_args(args):
     # create the parser for the "lang_id" command
     sub = subparsers.add_parser('lang_id', parents=[xls],
         help='Generate a C header file of language ID enumeration.')
-    sub.set_defaults(func=gen_lang_id_hfile, outfile='lang_id.h')
+    sub.set_defaults(func=gen_lang_id_hfile, outfile='LangID.h')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C header file (default "%s").
             ''' % sub.get_default('outfile'))
@@ -419,7 +423,7 @@ def parse_args(args):
     # create the parser for the "msg_id" command
     sub = subparsers.add_parser('msg_id', parents=[xls],
         help='Generate a C header file of message ID enumeration.')
-    sub.set_defaults(func=gen_msg_id_hfile, outfile='msg_id.h')
+    sub.set_defaults(func=gen_msg_id_hfile, outfile='MsgID.h')
     sub.add_argument('-o', '--output', metavar='<file>', dest='outfile',
         help='''place the output into <file>, a C header file (default "%s").
             ''' % sub.get_default('outfile'))
@@ -475,8 +479,8 @@ def main():
 if __name__ == '__main__':
     main()
     #rows = read_xls()
-    #gen_lang_id_hfile(rows, 'lang_id.h')
-    #gen_msg_id_hfile(rows, 'msg_id.h')
+    #gen_lang_id_hfile(rows, 'LangID.h')
+    #gen_msg_id_hfile(rows, 'MsgID.h')
     #char_tbl = read_char_lst('char.lst')
     #verify(rows, char_tbl, 'verify.report')
     #pack(rows, char_tbl, 'mlang.i')

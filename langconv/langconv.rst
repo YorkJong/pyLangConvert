@@ -7,8 +7,8 @@ Language Converting
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0003
-:Date: 2012-12-04
+:Revision: 0004
+:Date: 2012-12-25
 
 .. contents::
 
@@ -53,7 +53,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -o <file>, --output <file>
                         place the output into <file>, a C header file (default
-                        "lang_id.h").
+                        "LangID.h").
 
 msg_id command
 --------------
@@ -67,7 +67,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -o <file>, --output <file>
                         place the output into <file>, a C header file (default
-                        "msg_id.h").
+                        "MsgID.h").
 
 verify command
 --------------
@@ -106,6 +106,15 @@ ToDo List
 
 Version History
 ===============
+1.05
+----
+Released 2012-12-25
+
+* Changed default output filename of lang_id command to "LangID.h"
+* Changed default output filename of msg_id command to "MsgID.h"
+* Renamed enum MsgId to MsgID
+* Refined wrap_header_guard
+
 
 1.00
 ----

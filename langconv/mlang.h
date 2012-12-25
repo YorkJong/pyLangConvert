@@ -13,13 +13,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "lang_id.h"
-#include "msg_id.h"
+#include "LangID.h"
+#include "MsgID.h"
 
 typedef uint16_t Char;
 
 void ML_setLang(Lang);
-void ML_getMsgStr(MsgId, Char**, size_t* len);
+void ML_getMsgStr(MsgID, Char**, size_t* len);
 
 
 #endif

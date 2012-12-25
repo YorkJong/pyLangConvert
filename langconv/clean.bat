@@ -1,5 +1,5 @@
-del lang_id.h
-del msg_id.h
+del LangID.h
+del MsgID.h
 del verify.report
 del mlang.i
 
