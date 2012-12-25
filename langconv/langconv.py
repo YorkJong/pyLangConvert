@@ -217,6 +217,10 @@ def wrap_header_guard(lines, h_fn):
     """Wrap a C header guard for a given line list.
     """
     def underscoresize(txt):
+        """Return a under_scores text from a CamelCase text.
+
+        This function will leave a CamelCase text unchanged.
+        """
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', txt)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
