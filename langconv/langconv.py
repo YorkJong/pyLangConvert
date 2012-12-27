@@ -216,7 +216,7 @@ def prefix_authorship(lines, comment_mark='#'):
 def wrap_header_guard(lines, h_fn):
     """Wrap a C header guard for a given line list.
     """
-    def underscoresize(txt):
+    def underscore(txt):
         """Return a under_scores text from a CamelCase text.
 
         This function will leave a CamelCase text unchanged.
@@ -224,7 +224,7 @@ def wrap_header_guard(lines, h_fn):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', txt)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-    h_fn_sig = '_%s_H' % underscoresize(main_basename(h_fn)).upper()
+    h_fn_sig = '_%s_H' % underscore(main_basename(h_fn)).upper()
     begin = ['#ifndef %s' % h_fn_sig]
     begin += ['#define %s' % h_fn_sig, '', '']
     end = ['', '', '#endif // %s' % h_fn_sig, '']
