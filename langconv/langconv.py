@@ -14,7 +14,7 @@ import os
 import sys
 import re
 import argparse
-from itertools import izip
+from itertools import izip, ifilterfalse
 
 import xlrd
 
@@ -61,9 +61,18 @@ def read_unicode(fn):
 def read_xls(fn='dic.xls'):
     """Read an Excel file and return rows.
     """
+    def is_all_empty(seq):
+        for v in seq:
+            if v is not u'':
+                return False
+        return True
+
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
     rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
     rows = ([unicode(v).strip() for v in values] for values in rows)
+    rows = ifilterfalse(is_all_empty, rows)
+    cols = ifilterfalse(is_all_empty, izip(*rows))
+    rows = izip(*cols)
     rows = (values[1:] for values in rows if values[0].lower() != 'x')
     cols = (values[1:] for values in izip(*rows) if values[0].lower() != 'x')
     rows = izip(*cols)
