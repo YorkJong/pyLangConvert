@@ -8,13 +8,13 @@ help us indexing characters and packing messages.
 __software__ = "Multi-language converting tool"
 __version__ = "1.05"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2012/12/25 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2015/03/12 (last revision)"
 
 import os
 import sys
 import re
 import argparse
-from itertools import izip, ifilterfalse
+from itertools import izip, islice, ifilterfalse, takewhile
 
 import xlrd
 
@@ -67,15 +67,31 @@ def read_xls(fn='dic.xls'):
                 return False
         return True
 
+    def is_comment_line(seq):
+        for v in seq:
+            if v not in [u'', u'x', u'X']:
+                return False
+        return True
+
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
     rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
-    rows = ([unicode(v).strip() for v in values] for values in rows)
+    rows = ([unicode(v).strip() for v in vals] for vals in rows)
     rows = ifilterfalse(is_all_empty, rows)
     cols = ifilterfalse(is_all_empty, izip(*rows))
-    rows = izip(*cols)
-    rows = (values[1:] for values in rows if values[0].lower() != 'x')
-    cols = (values[1:] for values in izip(*rows) if values[0].lower() != 'x')
-    rows = izip(*cols)
+
+    cols = list(cols)
+    comment_col = list(islice(takewhile(is_comment_line, cols), 0, None))
+    has_comment_col = bool(comment_col)
+
+    rows = zip(*cols)
+    comment_row = list(islice(takewhile(is_comment_line, rows), 0, None))
+    has_comment_row = bool(comment_row)
+
+    if has_comment_col:
+        rows = (vals[1:] for vals in rows if vals[0].lower() != 'x')
+    if has_comment_row:
+        cols = (vals[1:] for vals in izip(*rows) if vals[0].lower() != 'x')
+        rows = izip(*cols)
     return list(rows)
 
 
