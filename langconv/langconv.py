@@ -60,6 +60,8 @@ def read_unicode(fn):
 
 def read_xls(fn='dic.xls'):
     """Read an Excel file and return rows.
+    This function will remove empty rows, empty columns, comment rows, and
+    comment columns. A comment row/col is prefixing with a letter 'x' or 'X'.
     """
     def is_all_empty(seq):
         for v in seq:
@@ -69,13 +71,15 @@ def read_xls(fn='dic.xls'):
 
     def is_comment_line(seq):
         for v in seq:
-            if v not in [u'', u'x', u'X']:
+            if v not in (u'', u'x', u'X'):
                 return False
         return True
 
     sheet = xlrd.open_workbook(fn).sheet_by_index(0)
     rows = (sheet.row_values(y) for y in xrange(sheet.nrows))
     rows = ([unicode(v).strip() for v in vals] for vals in rows)
+
+    # Remove empty rows and empty columns
     rows = ifilterfalse(is_all_empty, rows)
     cols = ifilterfalse(is_all_empty, izip(*rows))
 
@@ -87,11 +91,13 @@ def read_xls(fn='dic.xls'):
     comment_row = list(islice(takewhile(is_comment_line, rows), 0, None))
     has_comment_row = bool(comment_row)
 
+    # Remove comment rows and comment columns
     if has_comment_col:
-        rows = (vals[1:] for vals in rows if vals[0].lower() != 'x')
+        rows = (vals[1:] for vals in rows if vals[0] not in ('x', 'X'))
     if has_comment_row:
-        cols = (vals[1:] for vals in izip(*rows) if vals[0].lower() != 'x')
+        cols = (vals[1:] for vals in izip(*rows) if vals[0] not in ('x', 'X'))
         rows = izip(*cols)
+
     return list(rows)
 
 
