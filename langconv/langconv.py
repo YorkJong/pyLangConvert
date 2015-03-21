@@ -8,7 +8,7 @@ help us indexing characters and packing messages.
 __software__ = "Multi-language converting tool"
 __version__ = "1.05"
 __author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
-__date__ = "2012/11/27 (initial version) ~ 2015/03/12 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2015/03/21 (last revision)"
 
 import os
 import sys
@@ -97,6 +97,11 @@ def read_xls(fn='dic.xls'):
     if has_comment_row:
         cols = (vals[1:] for vals in izip(*rows) if vals[0] not in ('x', 'X'))
         rows = izip(*cols)
+
+    # Remove empty rows and empty columns (after removing comments)
+    rows = ifilterfalse(is_all_empty, rows)
+    cols = ifilterfalse(is_all_empty, izip(*rows))
+    rows = izip(*cols)
 
     return list(rows)
 
