@@ -38,7 +38,7 @@ def save_utf16_file(fn, lines):
 
 
 def read_unicode(fn):
-    """Read a unicode file that may encode with utf_16_le, utf_16_be, or utf_8.
+    """Read an Unicode file that may encode with utf_16_le, utf_16_be, or utf_8.
     """
     from codecs import BOM_UTF16_LE, BOM_UTF16_BE, BOM_UTF8
 
@@ -253,7 +253,7 @@ def wrap_header_guard(lines, h_fn):
     """Wrap a C header guard for a given line list.
     """
     def underscore(txt):
-        """Return a under_scores text from a CamelCase text.
+        """Return an under_scores text from a CamelCase text.
 
         This function will leave a CamelCase text unchanged.
         """
