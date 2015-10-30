@@ -1,9 +1,15 @@
-del %1.exe
-pyinstaller --onefile %1.py
 
-move dist\%1.exe .
+set target=%1
+if "%target%"=="" (
+    set /p target=Enter the target:
+)
 
-del /Q %1.spec
+del %target%.exe
+pyinstaller --onefile %target%.py
+
+move dist\%target%.exe .
+
+del /Q %target%.spec
 rem del /Q *.spec
 
 rd /Q /S build
