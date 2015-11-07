@@ -1,7 +1,7 @@
 
 set target=%1
 if "%target%"=="" (
-    set /p target=Enter the target:
+    set /p "target=Enter the target: "
 )
 
 del %target%.exe
