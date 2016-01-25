@@ -7,7 +7,7 @@ help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
 __version__ = "1.05"
-__author__ = "Jiang Yu-Kuan <york_jiang@mars-semi.com.tw>"
+__author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
 __date__ = "2012/11/27 (initial version) ~ 2015/03/21 (last revision)"
 
 import os
