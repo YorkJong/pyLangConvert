@@ -1,14 +1,14 @@
-========
-LangConv
-========
+===========
+LangConvert
+===========
 -------------------
 Language Converting
 -------------------
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0004
-:Date: 2012-12-25
+:Revision: 0005
+:Date: 2016-01-26
 
 .. contents::
 
@@ -16,10 +16,11 @@ Language Converting
 Introduction
 ============
 
-The purpose of this tool is for generating multi-language relative files. With
-an Excel dictionary file, it can enumerate language IDs and message IDs with
-the format of C header files. With an additional character list file, it can
-help us indexing characters and packing messages.
+LangConvert is an open source Python application to generate multi-language
+relative files for application on embedded systems. With an Excel dictionary
+file, it can enumerate language IDs and message IDs with the format of C header
+files. With an additional character list file, it can help us indexing
+characters and packing messages.
 
 Usage
 =====
