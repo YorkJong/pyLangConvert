@@ -9,7 +9,7 @@ characters and packing messages.
 
 ## Install ##
 
-1. Download a binary distribution of PicCrop (e.g., *LangConvert-1.05-bin.zip*)
+1. Download a binary distribution of LangConvert (e.g., *LangConvert-1.05-bin.zip*)
    from [Downloads](https://bitbucket.org/YorkJong/pylangconvert/downloads) page.
 2. Uncompress the binary distribution.
 
@@ -18,9 +18,12 @@ characters and packing messages.
 
 1. Install LangConvert.
 2. Edit the *dic.xls*
+    * The Excel dictionary file is used to enumerate language IDs and message
+      IDs.
 3. Edit the *char.lst* or just create an empty *char.lst*
+    * The character list file is for indexing characters and packing messages.
 4. Run the `demo.bat`
-    * This will generate *LangID.h*, *MsgID.h*, *malng.i* in c_src directory
+    * This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory
     * And generate *verify.report*
 5. Refined *char.lst* according the *verify.report*
 
