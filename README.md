@@ -20,18 +20,23 @@ characters and packing messages.
 2. Edit the *dic.xls*
     * The Excel dictionary file is used to enumerate language IDs and message
       IDs.
-3. Edit the *char.lst* or just create an empty *char.lst*
+3. Edit the *char.lst* or just create an empty *char.lst*.
     * The character list file is for indexing characters and packing messages.
-4. Run `demo.bat`
-    * This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory
-    * And generate *verify.report*
-5. Refined *char.lst* according the *verify.report*
+4. Run `demo.bat`.
+    * This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory.
+    * And generate *verify.report*.
+5. Refined *char.lst* according the *verify.report*.
 
 ### Note ###
 * Run `clean.bat` to remove the generated files
 
 ### A screenshot of *dic.xls* ###
 ![dic.xls.png](https://bitbucket.org/repo/kXE4Bp/images/2977180448-dic.xls.png)
+* The spreadsheet shown above has 20 rows and eight columns (A-H).
+* Row 2 is the header row listing languae names.
+* Column B is message ID column. An empty cell in the column means the ID of
+  this message is the same with English message.
+* The *x* in Cell A9 (Column A, Row 9) denotes Row 9 a comment (So do A10).
 
 ### A sample *char.lst* ###
 ```sh
@@ -56,6 +61,10 @@ characters and packing messages.
 일자전정제지틸파표하
 한화확？
 ```
+* The character listing file lists characters that may be used in multilingual
+  messages.
+* A line prefixing `#` denotes a comment line.
+* A line prefixing `:` denotes an offset of character indexing.
 
 ### The generated *verify.report* ###
 ```sh
@@ -70,6 +79,9 @@ characters and packing messages.
 @JQWXZ[\]^
 _`qx{|}~
 ```
+* The report file lists characters listed in *char.lst* without appearance
+  in *dix.xls*.
+* A line prefixing `#` denotes a comment line.
 
 ### The generated *LangID.h* ###
 ```c
@@ -95,6 +107,9 @@ typedef enum {
 
 #endif // _LANG_ID_H
 ```
+* The above is a C header file enumerating language names.
+* The language names are extracted from the header row of the spreadsheet
+  (e.g., *dic.xls*).
 
 ### The generated *MsgID.h* ###
 ```c
@@ -130,6 +145,9 @@ typedef enum {
 
 #endif // _MSG_ID_H
 ```
+* The above is a C header file enumerating message IDs.
+* The message IDs are extracted from the ID column of the spreadsheet (e.g.,
+  *dic.xls*).
 
 ### The generated *mlang.i* ###
 ```c
@@ -165,28 +183,11 @@ typedef enum {
   77,  79,  86,  73,  69,
   83,  84,  73,  76,  76,  32,  73,  77,  65,  71,  69,
 
-// Chinese message offsets
-  17,  24,  26,  29,  36,  43,  49,  53,  57,  61,  67,  71,  75,  79,  81,  83,  85,
-
-// Chinese messages
-  69, 110, 103, 108, 105, 115, 104,
- 199, 210,
- 260, 229, 244,
-  69, 115, 112,  97, 162, 111, 108,
- 170, 191, 189, 189, 182, 180, 181,
-  80, 111, 108, 115, 107, 105,
- 213, 226, 222, 208,
- 219, 204, 221, 218,
- 215, 206, 216, 202,
- 203, 225, 214, 210, 200, 263,
- 211, 224, 221, 207,
- 212, 217, 221, 218,
- 223, 220, 221, 218,
- 221, 218,
- 215, 209,
- 205, 201,
 //...
 ```
+* The above is a C included file listing character indexes of multilingual
+  messages.
+* See *mlang.c* in bin/c_src folder for details.
 
 ## Command Line ##
 ### Top level ###
