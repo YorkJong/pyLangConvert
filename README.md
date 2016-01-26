@@ -22,7 +22,7 @@ characters and packing messages.
       IDs.
 3. Edit the *char.lst* or just create an empty *char.lst*
     * The character list file is for indexing characters and packing messages.
-4. Run the `demo.bat`
+4. Run `demo.bat`
     * This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory
     * And generate *verify.report*
 5. Refined *char.lst* according the *verify.report*

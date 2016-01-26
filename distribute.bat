@@ -22,7 +22,7 @@ echo.
 echo =^> Copying distributed files
 xcopy /Y /E bin %dist_dir%\
 del %dist_dir%\*test.bat
-copy README.md %dist_dir%\README.txt
+copy *.md %dist_dir%\*.txt
 
 echo.
 echo =^> Compressing distributed files
