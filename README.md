@@ -31,7 +31,8 @@ characters and packing messages.
 * Run `clean.bat` to remove the generated files
 
 ### A screenshot of *dic.xls* ###
-![dic.xls.png](https://bitbucket.org/repo/kXE4Bp/images/2977180448-dic.xls.png)
+![dic.xls.png](https://bitbucket.org/repo/kXE4Bp/images/721654582-dic.xls.png)
+
 * The spreadsheet shown above has 20 rows and eight columns (A-H).
 * Row 2 is the header row listing languae names.
 * Column B is message ID column. An empty cell in the column means the ID of
