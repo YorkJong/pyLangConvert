@@ -41,8 +41,7 @@ characters and packing messages.
 
 ### A sample *char.lst* ###
 ```sh
-# ISO8859-1 (Latin-1)
-# ref. http://en.wikipedia.org/wiki/ISO/IEC_8859-1
+# A sample character list file
 
 :0x20
  !"#$%&'()*+,-./0123456789:;<=>?
@@ -62,7 +61,7 @@ characters and packing messages.
 일자전정제지틸파표하
 한화확？
 ```
-* The character listing file lists characters that may be used in multilingual
+* The character list file lists characters that may be used in multilingual
   messages.
 * A line prefixing `#` denotes a comment line.
 * A line prefixing `:` denotes an offset of character indexing.
