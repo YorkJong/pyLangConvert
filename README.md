@@ -61,7 +61,7 @@ characters and packing messages.
 일자전정제지틸파표하
 한화확？
 ```
-* The character list file lists characters that may be used in multilingual
+* The character-list file lists characters that may be used in multilingual
   messages.
 * A line prefixing `#` denotes a comment line.
 * A line prefixing `:` denotes an offset of character indexing.
@@ -79,8 +79,11 @@ characters and packing messages.
 @JQWXZ[\]^
 _`qx{|}~
 ```
-* The report file lists characters listed in *char.lst* without appearance
-  in *dix.xls*.
+* A report file lists two kind of characters:
+    1. Characters list in *char.lst* but are not used in *dic.xls*.
+    2. Characters are used in *dic.xls* but do not list in *char.lst*.
+* The above report file only lists case 1; that means that the *char.lst*
+  does not miss any character used in the *dic.xls*
 * A line prefixing `#` denotes a comment line.
 
 ### The generated *LangID.h* ###
