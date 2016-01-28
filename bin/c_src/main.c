@@ -7,15 +7,15 @@
  * @date 2012/12/03 (last revision)
  */
 #include <stdio.h>
+#include <stdint.h>
 
 #include "mlang.h"
 
 
-int main(int argc, const char * argv[])
+int main(void)
 {
     Char *str;
-    size_t len;
-    int i;
+    size_t len, i;
 
     ML_setLang(L_English);
     ML_getMsgStr(MSG_English, &str, &len);

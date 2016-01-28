@@ -7,3 +7,6 @@ del %c_dir%\mlang.i
 
 rd /q /s %c_dir%\bin
 rd /q /s %c_dir%\obj
+
+cd c_src
+make clean
