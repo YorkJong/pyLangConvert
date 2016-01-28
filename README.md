@@ -9,9 +9,11 @@ characters and packing messages.
 
 ## Install ##
 
-1. Download a binary distribution of LangConvert (e.g., *LangConvert-1.05-bin.zip*)
-   from [Downloads](https://bitbucket.org/YorkJong/pylangconvert/downloads) page.
+1. Download a binary distribution of LangConvert (e.g.,
+   *LangConvert-1.05-bin.zip*) from [Downloads][] page.
 2. Uncompress the binary distribution.
+
+[Downloads]: https://bitbucket.org/YorkJong/pylangconvert/downloads
 
 
 ## Getting Started ##
