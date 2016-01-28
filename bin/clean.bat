@@ -10,3 +10,4 @@ rd /q /s %c_dir%\obj
 
 cd c_src
 make clean
+cd ..
