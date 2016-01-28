@@ -41,7 +41,7 @@ characters and packing messages.
 * Row 2 is the header row listing languae names.
 * Column B is message-ID column. An empty cell in the column means the ID of
   this message is the same with English message.
-* The *x* in Cell A9 (Column A, Row 9) denotes Row 9 a comment (So do A10).
+* The `x` in Cell A9 (Column A, Row 9) denotes Row 9 a comment (So do A10).
 
 ### A sample *char.lst* ###
 ```sh
@@ -69,6 +69,10 @@ characters and packing messages.
   messages.
 * A line prefixing `#` denotes a comment line.
 * A line prefixing `:` denotes an offset of character indexing.
+    * `:0X20` means the index of the next character ` ` (space) is 0x20 (same
+      with space's ASCIll code), `!` 0x21, `"` 0x22, and so on.
+    * `:0xA0` means the index of next character `á` is 0xA0, `í` 0xA1, and so
+      on.
 
 ### The generated *verify.report* ###
 ```sh
@@ -116,7 +120,7 @@ typedef enum {
 ```
 * The above is a C header file enumerating language names.
 * The language names are extracted from the header row of the spreadsheet
-  (e.g., *dic.xls*).
+  (i.e., *dic.xls*).
 
 ### The generated *MsgID.h* ###
 ```c
@@ -153,7 +157,7 @@ typedef enum {
 #endif // _MSG_ID_H
 ```
 * The above is a C header file enumerating message IDs.
-* The message IDs are extracted from the ID column of the spreadsheet (e.g.,
+* The message IDs are extracted from the ID column of the spreadsheet (i.e.,
   *dic.xls*).
 
 ### A segment of the generated *mlang.i* ###
@@ -196,7 +200,7 @@ typedef enum {
   each language.
 * The 69, 110, 103, 108, 105, 115, 104 is the character indexes of **English**.
 * The 199, 210 is the character indexes of **中文**.
-* See *mlang.c* (in bin/c_src folder) for details.
+* See file *mlang.c* (in bin/c_src folder) for details.
 
 
 ## Command Line ##
