@@ -208,11 +208,12 @@ typedef enum {
 ## Command Line ##
 ### Top level ###
 ```
-usage: langconv.exe [-h] [-v] {lang_id,msg_id,verify,pack} ...
+usage: langconv.exe [-h] [-v] {trans_dic,lang_id,msg_id,verify,pack} ...
 
 positional arguments:
-  {lang_id,msg_id,verify,pack}
+  {trans_dic,lang_id,msg_id,verify,pack}
                         commands
+    trans_dic           Translate/Fill an Excel dictionary file.
     lang_id             Generate a C header file of language ID enumeration.
     msg_id              Generate a C header file of message ID enumeration.
     verify              Generate a report file that lists used-but-not-listed
@@ -223,6 +224,20 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
+```
+
+### trans_dic command ###
+```
+usage: langconv.exe trans_dic [-h] [-o <XLS-file>] XLS-file
+
+positional arguments:
+  XLS-file              An empty Excel dictionary file to translate.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <XLS-file>, --output <XLS-file>
+                        place the output into <XLS-file>, an Excel file
+                        (default "dic_trans.xls").
 ```
 
 ### lang_id command ###

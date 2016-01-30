@@ -6,19 +6,23 @@ the format of C header files. With an additional character list file, it can
 help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
-__version__ = "1.05"
+__version__ = "1.06"
 __author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
-__date__ = "2012/11/27 (initial version) ~ 2015/03/21 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2016/01/31 (last revision)"
 
 import sys
 import argparse
 from itertools import izip, islice, ifilterfalse, takewhile
 
 import xlrd
+import xlutils.copy
 
 from myutil import *
+import gtrans
 
 
+#-----------------------------------------------------------------------------
+# File Read
 #-----------------------------------------------------------------------------
 
 def read_xls(fn='dic.xls'):
@@ -90,6 +94,75 @@ def read_char_lst(fn):
 
 
 #-----------------------------------------------------------------------------
+# Language Translation
+#-----------------------------------------------------------------------------
+
+def trans(text, src, dest):
+    """Return a text after translation.
+
+    This function translates a text from the source language to the destination
+    language with glang module.
+
+    Arguments
+    ---------
+    text
+        the text to be translated
+    src
+        source language
+    dest
+        destination language
+    """
+    def html_decode(line):
+        pat = re.compile(r'&#(\d+);')
+        sub = lambda mo: unichr(int(mo.group(1)))
+        return pat.sub(sub, unicode(line))
+
+    sys.stdout.write('.')
+    return html_decode(gtrans.translate(text, src, dest))
+
+
+def trans_dicfile(infile='dic_empty.xls', outfile='dic_trans.xls',
+                  lang_name_row=1, src_lang_col=2):
+    """Translate/Fill an Excel dictionary file.
+
+    Arguments
+    ---------
+    infile
+        The Excel file to be translated
+    trans
+        A translator
+    lang_name_row
+        row of language names
+    src_lang_col
+        column of the source language
+    """
+    wb_r = xlrd.open_workbook(infile)
+    sh_r = wb_r.sheet_by_index(0)
+    header = [cell.value for cell in sh_r.row(lang_name_row)]
+    keys_ = [cell.value for cell in sh_r.col(src_lang_col)[lang_name_row + 1:]]
+
+    wb_w = xlutils.copy.copy(wb_r)
+    sh_w = wb_w.get_sheet(0)
+
+    src = header[src_lang_col]
+    dests = header[src_lang_col + 1:]
+    c_idxs = range(src_lang_col + 1, len(dests) + src_lang_col + 1)
+    r_idxs = range(lang_name_row + 1, len(keys_) + lang_name_row + 1)
+
+    sys.stdout.write('translating')
+    for c, dest in zip(c_idxs, dests):
+        msgs = [cell.value for cell in sh_r.col(c)[lang_name_row + 1:]]
+        msgs = [m or trans(k, src, dest) for m, k in zip(msgs, keys_)]
+        for r, m in zip(r_idxs, msgs):
+            sh_w.write(r, c, m)
+
+    wb_w.save(outfile)
+    sys.stdout.write('\nFile "%s" has saved' % outfile)
+
+
+#-----------------------------------------------------------------------------
+# Misc
+#-----------------------------------------------------------------------------
 
 def prefix_authorship(lines, comment_mark='//'):
     """Prefix authorship infomation to the given lines
@@ -124,6 +197,8 @@ def gen_msg_ids(rows):
     return [c_identifier(id) for id in ids]
 
 
+#-----------------------------------------------------------------------------
+# Action Functions
 #-----------------------------------------------------------------------------
 
 def gen_lang_id_hfile(rows, h_fn):
@@ -239,6 +314,8 @@ def pack(rows, char_tbl, h_fn):
 
 
 #-----------------------------------------------------------------------------
+# Command Line Interface
+#-----------------------------------------------------------------------------
 
 def parse_args(args):
     # create top-level parser
@@ -247,6 +324,19 @@ def parse_args(args):
                         version='%s v%s by %s' %
                         (__software__, __version__, __author__))
     subparsers = parser.add_subparsers(help='commands')
+
+    #--------------------------------------------------------------------------
+
+    # create the parser for the "trans_dic" command
+    sub = subparsers.add_parser('trans_dic',
+        help='Translate/Fill an Excel dictionary file.')
+    sub.set_defaults(func=trans_dicfile,
+        srcfile='dic_empty.xls', outfile='dic_trans.xls')
+    sub.add_argument('dicfile', metavar='XLS-file',
+        help='An empty Excel dictionary file to translate.')
+    sub.add_argument('-o', '--output', metavar='<XLS-file>', dest='outfile',
+        help='''place the output into <XLS-file>, an Excel file (default "%s").
+            ''' % sub.get_default('outfile'))
 
     #--------------------------------------------------------------------------
 
@@ -302,7 +392,9 @@ def parse_args(args):
 
     # parse args and execute functions
     args = parser.parse_args(args)
-    if 'char_tbl' in args:
+    if 'dicfile' in args:
+        args.func(args.dicfile, args.outfile)
+    elif 'char_tbl' in args:
         args.func(args.rows, args.char_tbl, args.outfile)
     else:
         args.func(args.rows, args.outfile)

@@ -3,8 +3,8 @@
 A python wrapper of Google Translate web service.
 """
 __author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
-__date__ = "2009/03/03 (initial); 2016/01/30(last revision)"
-__version__ = "1.5.1"
+__date__ = "2009/03/03 (initial); 2016/01/31(last revision)"
+__version__ = "1.5.3"
 
 import re
 import urllib2

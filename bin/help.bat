@@ -1,6 +1,9 @@
 langconv -h
 pause
 
+langconv trans_dic -h
+pause
+
 langconv lang_id -h
 pause
 

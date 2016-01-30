@@ -7,8 +7,8 @@ Language Converting
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0005
-:Date: 2016-01-26
+:Revision: 0006
+:Date: 2016-01-31
 
 .. contents::
 
@@ -26,11 +26,12 @@ Usage
 =====
 Top level
 ---------
-usage: langconv.exe [-h] [-v] {lang_id,msg_id,verify,pack} ...
+usage: langconv.exe [-h] [-v] {trans_dic,lang_id,msg_id,verify,pack} ...
 
 positional arguments:
-  {lang_id,msg_id,verify,pack}
+  {trans_dic,lang_id,msg_id,verify,pack}
                         commands
+    trans_dic           Translate/Fill an Excel dictionary file.
     lang_id             Generate a C header file of language ID enumeration.
     msg_id              Generate a C header file of message ID enumeration.
     verify              Generate a report file that lists used-but-not-listed
@@ -41,6 +42,19 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
+
+trans_dic command
+-----------------
+usage: langconv.exe trans_dic [-h] [-o <XLS-file>] XLS-file
+
+positional arguments:
+  XLS-file              An empty Excel dictionary file to translate.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o <XLS-file>, --output <XLS-file>
+                        place the output into <XLS-file>, an Excel file
+                        (default "dic_trans.xls").
 
 lang_id command
 ---------------
@@ -107,6 +121,12 @@ ToDo List
 
 Version History
 ===============
+1.06
+----
+Released 2016-01-31
+
+* Added trans_dic command
+
 1.05
 ----
 Released 2012-12-25
@@ -115,7 +135,6 @@ Released 2012-12-25
 * Changed default output filename of msg_id command to "MsgID.h"
 * Renamed enum MsgId to MsgID
 * Refined wrap_header_guard
-
 
 1.00
 ----
