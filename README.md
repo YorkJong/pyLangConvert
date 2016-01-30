@@ -34,7 +34,9 @@ characters and packing messages.
 5. Refined *char.lst* according the *verify.report*.
 
 ### Note ###
-* Run `clean.bat` to remove the generated files
+* Run `demo_trans.bat` to translate messages in *dic_empty.xls* and
+  output *dic_trans.xls*
+* Run `clean.bat` to remove the generated files.
 
 ### A screenshot of *dic.xls* ###
 ![dic.xls.png](https://bitbucket.org/repo/kXE4Bp/images/721654582-dic.xls.png)
