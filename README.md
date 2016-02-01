@@ -10,7 +10,7 @@ characters and packing messages.
 ## Install ##
 
 1. Download a binary distribution of LangConvert (e.g.,
-   *LangConvert-1.05-bin.zip*) from [Downloads][] page.
+   *LangConvert-1.06-bin.zip*) from [Downloads][] page.
 2. Uncompress the binary distribution.
 
 [Downloads]: https://bitbucket.org/YorkJong/pylangconvert/downloads
@@ -20,32 +20,32 @@ characters and packing messages.
 
 1. Install LangConvert.
 2. Edit the *dic.xls*
-    * The Excel dictionary file provides language translations for each
+    - The Excel dictionary file provides language translations for each
       messages.
-    * LangConvert uses the file to enumerate language IDs (see *LangID.h*)
+    - LangConvert uses the file to enumerate language IDs (see *LangID.h*)
       and to enumerate message IDs (see *MsgID.h*).
 3. Edit the *char.lst* or just create an empty *char.lst*.
-    * The character list file is used to decide orders of characters
-    * LangConvert uses the file to index characters and pack messages (see
+    - The character list file is used to decide orders of characters
+    - LangConvert uses the file to index characters and pack messages (see
       *mlang.i*).
 4. Run `demo.bat`.
-    * This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory.
-    * And generate *verify.report*.
-5. Refined *char.lst* according the *verify.report*.
+    - This will generate *LangID.h*, *MsgID.h*, *malng.i* in *c_src* directory.
+    - And generate *verify.report*.
+5. Refined *char.lst* according to the *verify.report*.
 
 ### Note ###
-* Run `demo_trans.bat` to translate messages in *dic_empty.xls* and
+- Run `demo_trans.bat` to translate messages in *dic_empty.xls* and
   output *dic_trans.xls*
-* Run `clean.bat` to remove the generated files.
+- Run `clean.bat` to remove the generated files.
 
 ### A screenshot of *dic.xls* ###
 ![dic.xls.png](https://bitbucket.org/repo/kXE4Bp/images/721654582-dic.xls.png)
 
-* The spreadsheet shown above has 20 rows and eight columns (A-H).
-* Row 2 is the header row listing languae names.
-* Column B is message-ID column. An empty cell in the column means the ID of
+- The spreadsheet shown above has 20 rows and eight columns (A-H).
+- Row 2 is the header row listing languae names.
+- Column B is message-ID column. An empty cell in the column means the ID of
   this message is the same with English message.
-* The `x` in Cell A9 (Column A, Row 9) denotes Row 9 a comment (So do A10).
+- The `x` in Cell A9 (Column A, Row 9) denotes Row 9 a comment (So do A10).
 
 ### A sample *char.lst* ###
 ```sh
@@ -69,13 +69,13 @@ characters and packing messages.
 일자전정제지틸파표하
 한화확？
 ```
-* The character-list file lists characters that may be used in multilingual
+- The character-list file lists characters that may be used in multilingual
   messages.
-* A line prefixing `#` denotes a comment line.
-* A line prefixing `:` denotes an offset of character indexing.
-    * `:0X20` means the index of the next character ` ` (space) is 0x20 (same
+- A line prefixing `#` denotes a comment line.
+- A line prefixing `:` denotes an offset of character indexing.
+    - `:0X20` means the index of the next character ` ` (space) is 0x20 (same
       with space's ASCIll code), `!` 0x21, `"` 0x22, and so on.
-    * `:0xA0` means the index of next character `á` is 0xA0, `í` 0xA1, and so
+    - `:0xA0` means the index of next character `á` is 0xA0, `í` 0xA1, and so
       on.
 
 ### The generated *verify.report* ###
@@ -91,12 +91,12 @@ characters and packing messages.
 @JQWXZ[\]^
 _`qx{|}~
 ```
-* A report file lists two kind of characters:
+- A report file lists two kind of characters:
     1. Characters list in *char.lst* but are not used in *dic.xls*.
     2. Characters are used in *dic.xls* but do not list in *char.lst*.
-* The above report file only lists case 1; that means that the *char.lst*
+- The above report file only lists case 1; that means that the *char.lst*
   does not miss any character used in the *dic.xls*
-* A line prefixing `#` denotes a comment line.
+- A line prefixing `#` denotes a comment line.
 
 ### The generated *LangID.h* ###
 ```c
@@ -122,8 +122,8 @@ typedef enum {
 
 #endif // _LANG_ID_H
 ```
-* The above is a C header file enumerating language names.
-* The language names are extracted from the header row of the spreadsheet
+- The above is a C header file enumerating language names.
+- The language names are extracted from the header row of the spreadsheet
   (i.e., *dic.xls*).
 
 ### The generated *MsgID.h* ###
@@ -160,8 +160,8 @@ typedef enum {
 
 #endif // _MSG_ID_H
 ```
-* The above is a C header file enumerating message IDs.
-* The message IDs are extracted from the ID column of the spreadsheet (i.e.,
+- The above is a C header file enumerating message IDs.
+- The message IDs are extracted from the ID column of the spreadsheet (i.e.,
   *dic.xls*).
 
 ### A segment of the generated *mlang.i* ###
@@ -200,11 +200,11 @@ typedef enum {
 
 //...
 ```
-* The above is a C included file listing character indexes of messages for
+- The above is a C included file listing character indexes of messages for
   each language.
-* The 69, 110, 103, 108, 105, 115, 104 is the character indexes of **English**.
-* The 199, 210 is the character indexes of **中文**.
-* See file *mlang.c* (in bin/c_src folder) for details.
+- The 69, 110, 103, 108, 105, 115, 104 is the character indexes of **English**.
+- The 199, 210 is the character indexes of **中文**.
+- See file *mlang.c* (in bin/c_src folder) for details.
 
 
 ## Command Line ##
