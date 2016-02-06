@@ -7,8 +7,8 @@ Language Converting
 
 :Author: Jiang Yu-Kuan
 :Contact: yukuan.jiang@gmail.com
-:Revision: 0007
-:Date: 2016-01-31
+:Revision: 0008
+:Date: 2016-02-06
 
 .. contents::
 
@@ -121,6 +121,13 @@ ToDo List
 
 Version History
 ===============
+1.07
+----
+Released 2016-02-XX
+
+- Applied Arabic shaping rules to verify command and pack command
+- Added Arabic module for shaping Arabic texts
+
 1.06
 ----
 Released 2016-01-31

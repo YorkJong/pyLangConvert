@@ -1,7 +1,7 @@
 @echo off
 
 set target=langconv
-set ver_num=1.06
+set ver_num=1.07
 set dist_name=LangConvert
 
 set dist_dir=%dist_name%-%ver_num%-bin

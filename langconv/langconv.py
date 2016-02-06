@@ -6,9 +6,9 @@ the format of C header files. With an additional character list file, it can
 help us indexing characters and packing messages.
 """
 __software__ = "Multi-language converting tool"
-__version__ = "1.06"
+__version__ = "1.07"
 __author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
-__date__ = "2012/11/27 (initial version) ~ 2016/01/31 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2016/02/06 (last revision)"
 
 import sys
 import argparse
@@ -19,6 +19,7 @@ import xlutils.copy
 
 from myutil import *
 import gtrans
+import arabic
 
 
 #-----------------------------------------------------------------------------
@@ -240,6 +241,13 @@ def verify(rows, char_tbl, report_fn):
         """
         heads, records = rows[0], rows[1:]
         heads = [h.upper() for h in heads]
+        try:
+            i = heads.index('ARABIC')
+            records = [list(r) for r in records]
+            for r in records:
+                r[i] = arabic.shape(r[i])
+        except ValueError:
+            pass
         i = heads.index('ID')
         return [r[:i] + r[i+1:] for r in records]
 
@@ -307,6 +315,8 @@ def pack(rows, char_tbl, h_fn):
         lines += ['', '// %s message offsets' % lang]
         lines += [array_str_from_ints(msg_offsets(msgs))]
         lines += ['', '// %s messages' % lang]
+        if lang.upper() == 'ARABIC':
+            msgs = [arabic.shape(m) for m in msgs]
         lines += [char_idx_str_from_msg(m, char_tbl) for m in msgs]
 
     lines = prefix_authorship(lines, comment_mark='//')

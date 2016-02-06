@@ -1,3 +1,8 @@
+### 1.07 (2016-02-XX)
+
+- Applied Arabic shaping rules to verify command and pack command
+- Added Arabic module for shaping Arabic texts
+
 ### 1.06 (2016-01-31)
 
 - Added trans_dic command
