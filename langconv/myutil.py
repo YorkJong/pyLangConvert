@@ -3,7 +3,7 @@
 This module put my utility functions
 """
 __author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
-__date__ = "2016/01/27 (initial version) ~ 2016/01/27 (last revision)"
+__date__ = "2016/01/27 (initial version) ~ 2016/04/27 (last revision)"
 
 import re
 import os
@@ -17,17 +17,15 @@ import sys
 def save_utf8_file(fn, lines):
     """Save string lines into an UTF8 text files.
     """
-    out_file = open(fn, "w")
-    out_file.write("\n".join(lines).encode("utf-8"))
-    out_file.close()
+    with open(fn, "w") as out_file:
+        out_file.write("\n".join(lines).encode("utf-8"))
 
 
 def save_utf16_file(fn, lines):
     """Save string lines into an UTF16 text files.
     """
-    out_file = open(fn, "wb")
-    out_file.write("\r\n".join(lines).encode("utf-16"))
-    out_file.close()
+    with open(fn, "wb") as out_file:
+        out_file.write("\r\n".join(lines).encode("utf-16"))
 
 
 def read_unicode(fn):
@@ -35,9 +33,8 @@ def read_unicode(fn):
     """
     from codecs import BOM_UTF16_LE, BOM_UTF16_BE, BOM_UTF8
 
-    in_file = open(fn, "rb")
-    bs = in_file.read()
-    in_file.close()
+    with open(fn, "rb") as in_file:
+        bs = in_file.read()
 
     if  bs.startswith(BOM_UTF16_LE):
         us = bs.decode("utf_16_le").lstrip(BOM_UTF16_LE.decode("utf_16_le"))
