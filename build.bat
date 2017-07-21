@@ -7,9 +7,7 @@ if "%target%"=="" (
 
 set src_dir=%target%
 
-pyinstaller --onefile %src_dir%\%target%.py
-
-move dist\%target%.exe bin
+pyinstaller --onefile --distpath bin %src_dir%\%target%.py
 
 del /Q %target%.spec
 rem del /Q *.spec
