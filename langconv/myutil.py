@@ -47,7 +47,7 @@ def read_unicode(fn):
 
 
 def main_basename(path):
-    """Return a main name of a basename of a given file path.
+    r"""Return a main name of a basename of a given file path.
 
     Example
     -------
@@ -55,7 +55,7 @@ def main_basename(path):
     'MsgID.h'
     """
     base = os.path.basename(path)
-    base_main, base_ext = os.path.splitext(base)
+    base_main, _base_ext = os.path.splitext(base)
     return base_main
 
 

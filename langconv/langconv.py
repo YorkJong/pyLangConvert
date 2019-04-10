@@ -8,16 +8,19 @@ help us indexing characters and packing messages.
 __software__ = "Multi-language converting tool"
 __version__ = "1.07"
 __author__ = "Jiang Yu-Kuan <yukuan.jiang@gmail.com>"
-__date__ = "2012/11/27 (initial version) ~ 2016/02/06 (last revision)"
+__date__ = "2012/11/27 (initial version) ~ 2019/04/10 (last revision)"
 
 import sys
+import re
 import argparse
 from itertools import izip, islice, ifilterfalse, takewhile
 
 import xlrd
 import xlutils.copy
 
-from myutil import *
+from myutil import read_unicode, save_utf8_file, save_utf16_file
+from myutil import prefix_info, c_identifier, wrap_header_guard
+from myutil import seq_divide, array_str_from_ints, offsets_from_lens
 import gtrans
 import arabic
 
